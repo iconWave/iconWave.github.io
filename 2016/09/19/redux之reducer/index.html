@@ -1,0 +1,767 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="redux解析," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="redux之reducerreducer  为什么叫reducer大概是由于reducer函数都能作为数组的 reducer 方法的参数，所以叫 reducer 的把。 Array中的reducerreduce需要两个参数，一个是回调函数，一个是初始值，没有初始值，会默认把数组第一个当初始值，并从第二个开始">
+<meta name="keywords" content="redux解析">
+<meta property="og:type" content="article">
+<meta property="og:title" content="redux之store">
+<meta property="og:url" content="http://yoursite.com/2016/09/19/redux之reducer/index.html">
+<meta property="og:site_name" content="iconWave">
+<meta property="og:description" content="redux之reducerreducer  为什么叫reducer大概是由于reducer函数都能作为数组的 reducer 方法的参数，所以叫 reducer 的把。 Array中的reducerreduce需要两个参数，一个是回调函数，一个是初始值，没有初始值，会默认把数组第一个当初始值，并从第二个开始">
+<meta property="og:image" content="http://yoursite.com/uploads/3.jpg">
+<meta property="og:updated_time" content="2017-06-18T10:20:55.634Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="redux之store">
+<meta name="twitter:description" content="redux之reducerreducer  为什么叫reducer大概是由于reducer函数都能作为数组的 reducer 方法的参数，所以叫 reducer 的把。 Array中的reducerreduce需要两个参数，一个是回调函数，一个是初始值，没有初始值，会默认把数组第一个当初始值，并从第二个开始">
+<meta name="twitter:image" content="http://yoursite.com/uploads/3.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/09/19/redux之reducer/"/>
+
+
+
+
+
+  <title>redux之store | iconWave</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">iconWave</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">web and poetry</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/09/19/redux之reducer/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="iconWave">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="iconWave">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">redux之store</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-09-19T23:48:00+08:00">
+                2016-09-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/redux/" itemprop="url" rel="index">
+                    <span itemprop="name">redux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><img src="/uploads/3.jpg" alt="Alt text"></p>
+<h1 id="redux之reducer"><a href="#redux之reducer" class="headerlink" title="redux之reducer"></a>redux之reducer</h1><p>reducer</p>
+<ul>
+<li>为什么叫reducer<br>大概是由于reducer函数都能作为数组的 reducer 方法的参数，所以叫 reducer 的把。</li>
+<li>Array中的reducer<br>reduce需要两个参数，一个是回调函数，一个是初始值，没有初始值，会默认把数组第一个当初始值，并从第二个开始</li>
+</ul>
+<a id="more"></a>
+<blockquote>
+<p>模拟数组的 reduce 方法</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">Array.prototype.reduce = function reduce (callback, init) &#123;</div><div class="line">  var i = 0;</div><div class="line">  if(typeof init === &apos;undefined&apos;) &#123;</div><div class="line">    init = this[0];</div><div class="line">    i = 1;</div><div class="line">  &#125;</div><div class="line">  if(typeof callback !== &apos;function&apos;) &#123;</div><div class="line">    throw new Error(callback + &apos; is not function&apos;)</div><div class="line">  &#125;</div><div class="line">  for( ;i&lt; this.length; i++ ) &#123;</div><div class="line">    init = callback(init, this[i])</div><div class="line">  &#125;</div><div class="line">  return init ;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p>reduce的使用</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">var ary = [1,2,3];</div><div class="line">console.log(ary.reduce((initialValue, next) =&gt; &#123;</div><div class="line">  console.log(initialValue, next);</div><div class="line">  return next;</div><div class="line">&#125;,0))</div><div class="line">// 01  12  23  3</div></pre></td></tr></table></figure>
+<blockquote>
+<p>写一个简单的 reducer</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">function reducer (initialValue, next) &#123;</div><div class="line">  console.log(initialValue, next)</div><div class="line">  switch (next) &#123;</div><div class="line">    case 1:</div><div class="line">      return next;</div><div class="line">      break;</div><div class="line">    default:</div><div class="line">      return initialValue</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">// 这个reducer 判断传入的值next。是1 的话 返回结果是 next 也就是1 ，所以最后结果都是1</div><div class="line">console.log(ary.reduce(reducer))</div><div class="line">// 12  13  1</div></pre></td></tr></table></figure>
+<h3 id="reducer在redux中的作用"><a href="#reducer在redux中的作用" class="headerlink" title="reducer在redux中的作用"></a>reducer在redux中的作用</h3><p>reducer的作用就是设计state结构，它可以给定state 的初始值，更重要的是告诉store，根据对应的action如何更新state。 通常我们的store需要多个reducer组合，成为我们最后的state tree</p>
+<blockquote>
+<p>注意点</p>
+<ul>
+<li>保持reducer的纯净</li>
+</ul>
+</blockquote>
+<p>通常我们的 reducer 是纯函数(pure function)即固定的输出，没有副作用，没有API请求… 等等，之后我们说为什么这么做。<br>通常我们在处理业务中，比如请求一个列表的数据并渲染。</p>
+<p>举个栗子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">const initialState = &#123;</div><div class="line">  code: -1,</div><div class="line">  data: [],</div><div class="line">  isFetching: false</div><div class="line">&#125;;</div><div class="line">//初始化我们的state，也就是没有请求之前(view层没有派发 dispatch)，我们根据接口的数据格式做一个模拟</div><div class="line">function List(state = initialState, action) &#123;</div><div class="line">  switch (action.type) &#123;</div><div class="line">// 这里的types 通常是我们保存这种常量的一个对象</div><div class="line">    case types.FETCH_LIST_SUCCESS:</div><div class="line">      return &#123;...state, data:action.data,isFetching:false&#125;;</div><div class="line">    case types.FETCHING_LIST:</div><div class="line">      return &#123;...state, isFetching: true&#125;</div><div class="line">    case types.FETCH_LIST_FAILURE:</div><div class="line">      return &#123;...state, isFetching:false&#125;;</div><div class="line">    default:</div><div class="line">      return state</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>我们的reducer函数就是根据请求的状态返回不同的数据，但是数据格式是一定的。Fetching就是 请求过程中，比如我们做一个loading效果可能需要这个。然后type是success就是成功我们返回数据。这些请求都放到actions 中了，actions去处理逻辑，数据API，重组数据。只需要传给reducer函数数据结果就ok了。</p>
+<blockquote>
+<p>为什么要重新返回一个对象</p>
+</blockquote>
+<p>我们可以看到reducer函数在拿到数据后通过Object.assign 重新返回一个对象，直接state.data 修改，返回state不行吗？</p>
+<p>首先 我们默认的初始state是不能直接改变的，我们的reducer函数 在数据failure的时候 return了默认的state，这个initialState 是不应该被修改的。</p>
+<p>另外，我们的react组件 会多次接受store传入props，每一次都应该是一个全新的对象引用，而不是同一个引用。比如我们需要比较两次传入的props，利用componentWillReciveProps（nextProps） 比较this.props 跟nextProps，肯定是需要两个对象空间的，不然是同一个对象引用也就没法比较了。</p>
+<p>所以redux 中的reducer 函数要求我们必须返回新的对象state</p>
+<p><a href="http://cn.redux.js.org/docs/basics/Reducers.html" target="_blank" rel="external">redux文档-reducer</a></p>
+<h3 id="多个reducer组合成我们的state-tree"><a href="#多个reducer组合成我们的state-tree" class="headerlink" title="多个reducer组合成我们的state tree"></a>多个reducer组合成我们的state tree</h3><p>通常我们会引入redux提供的一个函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">import &#123; combineReducers &#125; from &apos;redux&apos;</div></pre></td></tr></table></figure>
+<p>其实combineReducers做的事情很简单，顾名思义就是合并多个reducer<br>比如我们一个项目有多个reducer但是最后需要合并成一个，然后告诉store生成state tree，再注入Provider组件，先不关注Provider的问题。我们看一下combineReducers的简单实现</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">//首先我们组合得到的reducer仍旧是一个函数</div><div class="line">//这个reducer会整合所有的reducer</div><div class="line">//然后根据我们定义的状态树的格式返回一个大的state tree</div><div class="line">// 根据reducers这个对象的key，取到reducer函数，并传入对应的 state</div><div class="line">const combineReducers = function combineReducers (reducers) &#123;</div><div class="line">  return (state = &#123;&#125;, action) &#123;</div><div class="line">    Object.keys(reducers).reduce((initialState, key) =&gt; &#123;</div><div class="line">      initialState[key] = reducers[key](state[key], action)</div><div class="line">      return initialState</div><div class="line">    &#125;,&#123;&#125;)</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这个函数返回一个rootReducer，然后createStore接收rootReducer，在createStore内部会调用一次dispatch(init)，rootReducer 会执行，所有我们制定的reducrs对象中的key 都会被添加到 一个初始化initialState中，遍历将每个子级state添加到initialState 。init的时候，state[key]是undefined，每个reducer函数有初始值 返回。以后的dispatch ，因为有了state tree，state[key]都可以取到值了。</p>
+<p>待续…</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/redux解析/" rel="tag"># redux解析</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/08/20/redux-devtools/" rel="next" title="redux-devtools">
+                <i class="fa fa-chevron-left"></i> redux-devtools
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/20/eslint简单使用/" rel="prev" title="eslint简单使用">
+                eslint简单使用 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.png"
+               alt="iconWave" />
+          <p class="site-author-name" itemprop="name">iconWave</p>
+           
+              <p class="site-description motion-element" itemprop="description">人生除了代码还有诗和远方。</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#redux之reducer"><span class="nav-number">1.</span> <span class="nav-text">redux之reducer</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#reducer在redux中的作用"><span class="nav-number">1.0.1.</span> <span class="nav-text">reducer在redux中的作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多个reducer组合成我们的state-tree"><span class="nav-number">1.0.2.</span> <span class="nav-text">多个reducer组合成我们的state tree</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">iconWave</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
